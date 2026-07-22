@@ -74,3 +74,29 @@ const user = await fetch("http://127.0.0.1:7777/get/user")
 ```bash
 npm test
 ```
+
+## macOS 登录后自动启动
+
+项目提供 `launchd/com.guofeng.localstore.plist`。该文件包含当前机器的绝对项目路径和 Node 路径；移动项目或更换 Node 后需要同步修改。安装后，服务会在用户登录时自动启动，并在异常退出后重启：
+
+```bash
+cp launchd/com.guofeng.localstore.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.guofeng.localstore.plist
+```
+
+卸载服务：
+
+```bash
+launchctl bootout gui/$(id -u)/com.guofeng.localstore
+rm ~/Library/LaunchAgents/com.guofeng.localstore.plist
+```
+
+卸载不会删除 `.localstore/data.json` 和 `.localstore/requests.json`。
+
+查看启动和运行错误：
+
+```bash
+tail -f ~/Library/Logs/localstore.error.log
+```
+
+进程日志位于 `~/Library/Logs/localstore.log` 和 `~/Library/Logs/localstore.error.log`。不再需要历史诊断信息时可以清空这两个文件。
