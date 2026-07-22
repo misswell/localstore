@@ -1,0 +1,14 @@
+{
+  "name": "localstore",
+  "version": "1.0.0",
+  "description": "A CORS-enabled localStorage-like HTTP service for frontend debugging",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/run.js"
+  },
+  "engines": {
+    "node": ">=14.8"
+  },
+  "license": "MIT"
+}
