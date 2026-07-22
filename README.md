@@ -27,7 +27,7 @@ HOST=0.0.0.0 PORT=8888 DATA_FILE=/tmp/localstore.json LOG_FILE=/tmp/localstore-r
 请求体会以原始文本存储，并记录请求的 `Content-Type`：
 
 ```bash
-curl -X POST http://127.0.0.1:7777/set/xxxkey \
+curl -X POST http://127.0.0.1:7777/mock/xxxkey \
   -H 'Content-Type: application/json' \
   -d '{"name":"Codex","enabled":true}'
 ```
@@ -35,7 +35,7 @@ curl -X POST http://127.0.0.1:7777/set/xxxkey \
 ### 读取
 
 ```bash
-curl http://127.0.0.1:7777/get/xxxkey
+curl http://127.0.0.1:7777/mock/xxxkey
 ```
 
 不存在的键返回 HTTP `404`。包含空格、斜杠等字符的键应使用 `encodeURIComponent` 编码。
@@ -47,7 +47,7 @@ curl http://127.0.0.1:7777/get/xxxkey
 curl http://127.0.0.1:7777/keys
 
 # 删除一个键
-curl -X DELETE http://127.0.0.1:7777/remove/xxxkey
+curl -X DELETE http://127.0.0.1:7777/mock/xxxkey
 
 # 清空所有数据
 curl -X POST http://127.0.0.1:7777/clear
@@ -59,13 +59,13 @@ curl http://127.0.0.1:7777/logs
 ## 前端示例
 
 ```js
-await fetch("http://127.0.0.1:7777/set/user", {
+await fetch("http://127.0.0.1:7777/mock/user", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ id: 1, name: "Alice" }),
 });
 
-const user = await fetch("http://127.0.0.1:7777/get/user")
+const user = await fetch("http://127.0.0.1:7777/mock/user")
   .then((response) => response.json());
 ```
 

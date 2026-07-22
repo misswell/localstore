@@ -20,10 +20,10 @@ npm start
 
 ## 写入数据
 
-使用 `POST /set/:key`，请求体就是要保存的值：
+使用 `POST /mock/:key`，请求体就是要保存的值：
 
 ```bash
-curl -X POST 'http://127.0.0.1:7777/set/task-result' \
+curl -X POST 'http://127.0.0.1:7777/mock/task-result' \
   -H 'Content-Type: application/json' \
   --data '{"status":"done","message":"处理完成"}'
 ```
@@ -36,10 +36,10 @@ curl -X POST 'http://127.0.0.1:7777/set/task-result' \
 
 ## 读取数据
 
-使用 `GET /get/:key`：
+使用 `GET /mock/:key`：
 
 ```bash
-curl --fail 'http://127.0.0.1:7777/get/task-result'
+curl --fail 'http://127.0.0.1:7777/mock/task-result'
 ```
 
 读取成功会原样返回保存的数据。键不存在时返回 HTTP 404。
@@ -51,7 +51,7 @@ curl --fail 'http://127.0.0.1:7777/get/task-result'
 curl --fail 'http://127.0.0.1:7777/keys'
 
 # 删除一个键
-curl -X DELETE 'http://127.0.0.1:7777/remove/task-result'
+curl -X DELETE 'http://127.0.0.1:7777/mock/task-result'
 
 # 清空全部数据（执行前必须获得用户确认）
 curl -X POST 'http://127.0.0.1:7777/clear'
@@ -65,7 +65,7 @@ JavaScript 示例：
 
 ```js
 const key = encodeURIComponent("用户/设置");
-const url = `http://127.0.0.1:7777/get/${key}`;
+const url = `http://127.0.0.1:7777/mock/${key}`;
 ```
 
 ## AI 操作规则
@@ -82,8 +82,8 @@ const url = `http://127.0.0.1:7777/get/${key}`;
 
 ```bash
 # 写入
-curl -X POST 'http://127.0.0.1:7777/set/<URL编码后的键>' --data '<值>'
+curl -X POST 'http://127.0.0.1:7777/mock/<URL编码后的键>' --data '<值>'
 
 # 读取
-curl --fail 'http://127.0.0.1:7777/get/<URL编码后的键>'
+curl --fail 'http://127.0.0.1:7777/mock/<URL编码后的键>'
 ```

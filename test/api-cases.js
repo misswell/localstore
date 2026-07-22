@@ -17,7 +17,7 @@ export async function apiCases(dataFile) {
 
   const cases = [
     ["stores and retrieves text", async () => {
-      const saved = await request(baseUrl, "/set/greeting", {
+      const saved = await request(baseUrl, "/mock/greeting", {
         method: "POST",
         headers: { "content-type": "text/plain; charset=utf-8" },
         body: "你好，localstore",
@@ -25,31 +25,41 @@ export async function apiCases(dataFile) {
       assert.equal(saved.status, 200);
       assert.equal(saved.headers["access-control-allow-origin"], "*");
 
-      const loaded = await request(baseUrl, "/get/greeting");
+      const loaded = await request(baseUrl, "/mock/greeting");
       assert.equal(loaded.status, 200);
       assert.equal(loaded.headers["content-type"], "text/plain; charset=utf-8");
       assert.equal(loaded.body, "你好，localstore");
     }],
     ["preserves JSON and URL-encoded keys", async () => {
       const value = JSON.stringify({ enabled: true, count: 3 });
-      await request(baseUrl, `/set/${encodeURIComponent("user settings")}`, {
+      await request(baseUrl, `/mock/${encodeURIComponent("user settings")}`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: value,
       });
-      const loaded = await request(baseUrl, `/get/${encodeURIComponent("user settings")}`);
+      const loaded = await request(baseUrl, `/mock/${encodeURIComponent("user settings")}`);
       assert.deepEqual(JSON.parse(loaded.body), JSON.parse(value));
     }],
     ["answers CORS preflight", async () => {
-      const response = await request(baseUrl, "/set/key", { method: "OPTIONS" });
+      const response = await request(baseUrl, "/mock/key", { method: "OPTIONS" });
       assert.equal(response.status, 204);
       assert.equal(response.headers["access-control-allow-origin"], "*");
       assert.match(response.headers["access-control-allow-methods"], /POST/);
     }],
     ["returns 404 for missing keys", async () => {
-      const response = await request(baseUrl, "/get/missing?token=must-not-be-logged");
+      const response = await request(baseUrl, "/mock/missing?token=must-not-be-logged");
       assert.equal(response.status, 404);
       assert.equal(JSON.parse(response.body).error, "Key not found");
+    }],
+    ["deletes values through the unified mock path", async () => {
+      await request(baseUrl, "/mock/delete-me", { method: "POST", body: "value" });
+      const removed = await request(baseUrl, "/mock/delete-me", { method: "DELETE" });
+      assert.equal(removed.status, 200);
+      assert.equal((await request(baseUrl, "/mock/delete-me")).status, 404);
+    }],
+    ["does not expose the legacy set and get routes", async () => {
+      assert.equal((await request(baseUrl, "/set/legacy", { method: "POST", body: "value" })).status, 404);
+      assert.equal((await request(baseUrl, "/get/legacy")).status, 404);
     }],
     ["serves the request log dashboard", async () => {
       const response = await request(baseUrl, "/");
@@ -60,7 +70,7 @@ export async function apiCases(dataFile) {
     ["returns current request logs without logging dashboard polling", async () => {
       const first = await request(baseUrl, "/logs");
       const entries = JSON.parse(first.body);
-      assert.ok(entries.some((entry) => entry.path === "/set/greeting" && entry.status === 200));
+      assert.ok(entries.some((entry) => entry.path === "/mock/greeting" && entry.status === 200));
       assert.ok(entries.some((entry) => entry.method === "OPTIONS"));
       assert.ok(entries.every((entry) => !entry.path.includes("must-not-be-logged")));
       const second = JSON.parse((await request(baseUrl, "/logs")).body);

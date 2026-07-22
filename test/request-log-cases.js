@@ -12,7 +12,7 @@ export function requestLogCases(directory) {
       await first.add({
         timestamp: "2026-07-22T01:00:00.000Z",
         method: "POST",
-        path: "/set/example",
+        path: "/mock/example",
         status: 200,
         durationMs: 4,
         origin: null,
@@ -22,7 +22,7 @@ export function requestLogCases(directory) {
       const second = new RequestLog(file);
       await second.load();
       assert.equal(second.list().length, 1);
-      assert.equal(second.list()[0].path, "/set/example");
+      assert.equal(second.list()[0].path, "/mock/example");
     }],
   ];
 }

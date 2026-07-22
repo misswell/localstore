@@ -20,20 +20,20 @@ export function createLocalStoreServer(storage, requestLog) {
         return sendJson(response, 200, requestLog ? requestLog.list() : []);
       }
 
-      if (request.method === "POST" && route.action === "set") {
+      if (request.method === "POST" && route.action === "mock") {
         const value = await readBody(request);
         const contentType = request.headers["content-type"] || "text/plain; charset=utf-8";
         await storage.set(route.key, value, contentType);
         return sendJson(response, 200, { ok: true, key: route.key });
       }
 
-      if (request.method === "GET" && route.action === "get") {
+      if (request.method === "GET" && route.action === "mock") {
         const item = storage.get(route.key);
         if (!item) return sendJson(response, 404, { error: "Key not found", key: route.key });
         return send(response, 200, item.value, { "content-type": item.contentType });
       }
 
-      if (request.method === "DELETE" && route.action === "remove") {
+      if (request.method === "DELETE" && route.action === "mock") {
         const removed = await storage.remove(route.key);
         return sendJson(response, removed ? 200 : 404, { ok: removed, key: route.key });
       }

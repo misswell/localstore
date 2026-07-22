@@ -38,7 +38,7 @@ npm test
 
 ### 写入键值
 
-`POST /set/:key`
+`POST /mock/:key`
 
 请求体会以 UTF-8 原文保存，同时保存请求的 `Content-Type`。成功返回 HTTP 200：
 
@@ -48,7 +48,7 @@ npm test
 
 ### 读取键值
 
-`GET /get/:key`
+`GET /mock/:key`
 
 成功时返回 HTTP 200、原始请求体和写入时的 `Content-Type`。键不存在时返回 HTTP 404：
 
@@ -59,7 +59,7 @@ npm test
 ### 管理键值
 
 - `GET /keys`：返回所有键组成的 JSON 数组
-- `DELETE /remove/:key`：删除指定键
+- `DELETE /mock/:key`：删除指定键
 - `POST /clear`：删除全部键值
 - `GET /`：返回可视化请求日志控制台
 - `GET /logs`：返回最近 1,000 条请求日志，最新记录在前
@@ -69,7 +69,7 @@ npm test
 写入 JSON：
 
 ```bash
-curl -X POST 'http://127.0.0.1:7777/set/user' \
+curl -X POST 'http://127.0.0.1:7777/mock/user' \
   -H 'Content-Type: application/json' \
   --data '{"id":1,"name":"Alice"}'
 ```
@@ -77,20 +77,20 @@ curl -X POST 'http://127.0.0.1:7777/set/user' \
 读取并解析 JSON：
 
 ```bash
-curl --fail 'http://127.0.0.1:7777/get/user'
+curl --fail 'http://127.0.0.1:7777/mock/user'
 ```
 
 浏览器 JavaScript：
 
 ```js
 const key = encodeURIComponent("user settings");
-await fetch(`http://127.0.0.1:7777/set/${key}`, {
+await fetch(`http://127.0.0.1:7777/mock/${key}`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ theme: "dark" }),
 });
 
-const value = await fetch(`http://127.0.0.1:7777/get/${key}`)
+const value = await fetch(`http://127.0.0.1:7777/mock/${key}`)
   .then((response) => {
     if (!response.ok) throw new Error(`localstore: HTTP ${response.status}`);
     return response.json();

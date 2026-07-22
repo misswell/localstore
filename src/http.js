@@ -37,10 +37,10 @@ export async function readBody(request) {
 
 export function parseRoute(rawUrl) {
   const url = new URL(rawUrl, "http://localhost");
-  const match = url.pathname.match(/^\/(set|get|remove)\/(.+)$/);
+  const match = url.pathname.match(/^\/mock\/(.+)$/);
   if (match) {
     try {
-      return { action: match[1], key: decodeURIComponent(match[2]) };
+      return { action: "mock", key: decodeURIComponent(match[1]) };
     } catch {
       return { action: "invalid" };
     }
