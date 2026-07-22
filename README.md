@@ -12,10 +12,12 @@ npm start
 
 服务默认监听 `http://127.0.0.1:7777`。
 
+在浏览器打开该地址可以查看实时请求日志和历史记录。日志默认持久化在 `.localstore/requests.json`，最多保留最近 1,000 条。
+
 可通过环境变量修改配置：
 
 ```bash
-HOST=0.0.0.0 PORT=8888 DATA_FILE=/tmp/localstore.json npm start
+HOST=0.0.0.0 PORT=8888 DATA_FILE=/tmp/localstore.json LOG_FILE=/tmp/localstore-requests.json npm start
 ```
 
 ## 接口
@@ -49,6 +51,9 @@ curl -X DELETE http://127.0.0.1:7777/remove/xxxkey
 
 # 清空所有数据
 curl -X POST http://127.0.0.1:7777/clear
+
+# 获取请求日志（JSON）
+curl http://127.0.0.1:7777/logs
 ```
 
 ## 前端示例

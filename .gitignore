@@ -1,3 +1,5 @@
 node_modules/
 .localstore/
 *.log
+.playwright-cli/
+output/

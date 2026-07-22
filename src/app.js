@@ -1,12 +1,24 @@
 import { createServer } from "http";
+import { dashboardAssets } from "./dashboard.js";
 import { parseRoute, readBody, send, sendJson } from "./http.js";
+import { attachRequestLogger } from "./request-log.js";
 
-export function createLocalStoreServer(storage) {
+export function createLocalStoreServer(storage, requestLog) {
   return createServer(async (request, response) => {
+    attachRequestLogger(request, response, requestLog);
     try {
       if (request.method === "OPTIONS") return send(response, 204);
 
       const route = parseRoute(request.url);
+
+      if (request.method === "GET" && dashboardAssets[route.action]) {
+        const asset = dashboardAssets[route.action];
+        return send(response, 200, asset.body, { "content-type": asset.contentType });
+      }
+
+      if (request.method === "GET" && route.action === "logs") {
+        return sendJson(response, 200, requestLog ? requestLog.list() : []);
+      }
 
       if (request.method === "POST" && route.action === "set") {
         const value = await readBody(request);
@@ -33,13 +45,6 @@ export function createLocalStoreServer(storage) {
       if (request.method === "POST" && route.action === "clear") {
         await storage.clear();
         return sendJson(response, 200, { ok: true });
-      }
-
-      if (request.method === "GET" && route.action === "root") {
-        return sendJson(response, 200, {
-          name: "localstore",
-          endpoints: ["POST /set/:key", "GET /get/:key", "DELETE /remove/:key", "GET /keys", "POST /clear"],
-        });
       }
 
       if (route.action === "invalid") {
