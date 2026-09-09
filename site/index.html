@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#111820">
+    <meta name="description" content="localstore：一个零依赖、跨来源、类似 localStorage 的本地 HTTP 存储服务，专为前端调试准备。">
+    <title>localstore · 让调试状态跨过页面边界</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="site-shell" id="top">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="localstore 首页">
+          <span class="brand-mark" aria-hidden="true">ls</span>
+          <span>localstore</span>
+        </a>
+        <nav class="nav" aria-label="主导航">
+          <a href="#why">为什么</a>
+          <a href="#api">接口</a>
+          <a href="#install">快速开始</a>
+        </nav>
+        <a class="nav-cta" href="https://github.com/misswell/localstore" target="_blank" rel="noreferrer">
+          GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> LOCAL-FIRST DEBUG TOOL</p>
+            <h1 id="hero-title">让调试状态<br><em>跨过页面边界。</em></h1>
+            <p class="hero-lead">
+              localstore 把浏览器里孤立的临时状态，变成一个可通过 HTTP 读写、可被多个页面共享的本地存储层。
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#install">三行接入 <span aria-hidden="true">↓</span></a>
+              <a class="text-link" href="#api">查看接口 <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="hero-facts" aria-label="产品特性">
+              <span><strong>0</strong> 运行时依赖</span>
+              <span><strong>10 MB</strong> 单次请求</span>
+              <span><strong>127.0.0.1</strong> 默认监听</span>
+            </div>
+          </div>
+
+          <div class="hero-stage" aria-label="localstore 请求流示意图">
+            <div class="stage-orbit orbit-one" aria-hidden="true"></div>
+            <div class="stage-orbit orbit-two" aria-hidden="true"></div>
+            <div class="stage-grid" aria-hidden="true"></div>
+            <div class="packet packet-back" aria-hidden="true">
+              <span class="packet-label">REQUEST / 01</span>
+              <span class="packet-line"></span>
+              <span class="packet-line short"></span>
+            </div>
+            <div class="request-card">
+              <div class="request-topline">
+                <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+                <span class="request-caption">LOCALSTORE / TRACE</span>
+                <span class="request-state"><span class="live-dot" aria-hidden="true"></span> LIVE</span>
+              </div>
+              <div class="request-route">
+                <span class="method method-post">POST</span>
+                <code>/mock/user</code>
+                <span class="response-code">200 OK</span>
+              </div>
+              <div class="code-payload">
+                <span class="code-line"><b>01</b><i>{</i></span>
+                <span class="code-line"><b>02</b><span class="indent">"theme": <mark>"dark"</mark>,</span></span>
+                <span class="code-line"><b>03</b><span class="indent">"ready": <strong>true</strong></span></span>
+                <span class="code-line"><b>04</b><i>}</i></span>
+              </div>
+              <div class="request-footer">
+                <span>Content-Type</span>
+                <code>application/json</code>
+                <span class="request-time">12 ms</span>
+              </div>
+            </div>
+            <div class="stage-label label-client"><span>01</span><strong>你的页面</strong><small>fetch()</small></div>
+            <div class="stage-label label-store"><span>02</span><strong>localstore</strong><small>127.0.0.1:7777</small></div>
+            <div class="stage-connector" aria-hidden="true"><span>HTTP</span></div>
+          </div>
+        </section>
+
+        <section class="signal-bar" aria-label="localstore 定位">
+          <p>像 localStorage 一样简单</p>
+          <span class="signal-rule" aria-hidden="true"></span>
+          <p>像 HTTP 一样可见</p>
+          <span class="signal-rule" aria-hidden="true"></span>
+          <p>只在你的机器上运行</p>
+        </section>
+
+        <section class="why-section section-block" id="why" aria-labelledby="why-title">
+          <div class="section-intro">
+            <p class="section-kicker">WHY LOCALSTORE</p>
+            <h2 id="why-title">当状态藏在浏览器里，调试就被困在一个标签页。</h2>
+          </div>
+          <div class="why-copy">
+            <p>
+              你正在调试的，可能是另一个页面、另一个端口，甚至是另一个进程。localstore 提供一块中立的本地空间，让这些上下文用同一个 key 交换数据。
+            </p>
+            <div class="mini-flow" aria-label="数据流转示意">
+              <div class="flow-node"><span class="flow-icon browser-icon">&lt;/&gt;</span><strong>页面 A</strong><small>localhost:3000</small></div>
+              <div class="flow-arrow" aria-hidden="true">↔</div>
+              <div class="flow-node flow-node-active"><span class="flow-icon store-icon">ls</span><strong>localstore</strong><small>127.0.0.1:7777</small></div>
+              <div class="flow-arrow" aria-hidden="true">↔</div>
+              <div class="flow-node"><span class="flow-icon browser-icon">&lt;/&gt;</span><strong>页面 B</strong><small>localhost:5173</small></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="feature-section section-block" aria-labelledby="feature-title">
+          <div class="section-heading">
+            <p class="section-kicker">THE SMALL TOOL THAT STAYS OUT OF THE WAY</p>
+            <h2 id="feature-title">把复杂留给应用，<br>把存取变成一条请求。</h2>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card feature-card-teal">
+              <div class="feature-card-top"><span class="feature-symbol">↗</span><span class="feature-number">01</span></div>
+              <h3>任意来源都能读写</h3>
+              <p>内置 CORS，跨页面、跨端口、跨进程共享调试数据，不用再复制粘贴。</p>
+            </article>
+            <article class="feature-card feature-card-coral">
+              <div class="feature-card-top"><span class="feature-symbol">≋</span><span class="feature-number">02</span></div>
+              <h3>原样保存你的值</h3>
+              <p>文本、JSON、配置片段都按原始内容保存，同时记住写入时的 Content-Type。</p>
+            </article>
+            <article class="feature-card feature-card-ink">
+              <div class="feature-card-top"><span class="feature-symbol">⌁</span><span class="feature-number">03</span></div>
+              <h3>每一次请求都可见</h3>
+              <p>启动后打开本地控制台，实时查看读写轨迹、状态码、来源和耗时。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="install-section section-block" id="install" aria-labelledby="install-title">
+          <div class="install-copy">
+            <p class="section-kicker">READY WHEN YOU ARE</p>
+            <h2 id="install-title">从启动服务到第一次读写，只要三行。</h2>
+            <p>不需要 SDK，不需要构建插件。localstore 是一个可以随手启动、随时关掉的开发工具。</p>
+            <div class="install-steps">
+              <div class="install-step"><span>01</span><div><strong>启动</strong><code>npm start</code></div></div>
+              <div class="install-step"><span>02</span><div><strong>写入</strong><code>POST /mock/:key</code></div></div>
+              <div class="install-step"><span>03</span><div><strong>观察</strong><code>GET /logs</code></div></div>
+            </div>
+          </div>
+          <div class="code-card">
+            <div class="code-card-top"><span><i></i><i></i><i></i></span><small>quick-start.js</small><button class="copy-button" type="button" data-copy-target="quick-start-code">复制代码</button></div>
+            <pre id="quick-start-code"><code><span class="code-muted">const</span> key = encodeURIComponent(<span class="code-string">"user settings"</span>);
+
+<span class="code-muted">await</span> fetch(<span class="code-string">`http://127.0.0.1:7777/mock/</span>${key}<span class="code-string">`</span>, {
+  method: <span class="code-string">"POST"</span>,
+  headers: { <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span> },
+  body: JSON.stringify({ theme: <span class="code-string">"dark"</span> }),
+});</code></pre>
+            <div class="code-card-foot"><span class="terminal-prompt">$</span><span>写入完成 · <b>user settings</b></span></div>
+          </div>
+        </section>
+
+        <section class="api-section section-block" id="api" aria-labelledby="api-title">
+          <div class="section-heading api-heading">
+            <div><p class="section-kicker">A TINY HTTP CONTRACT</p><h2 id="api-title">四个常用端点，覆盖调试时真正需要的动作。</h2></div>
+            <a class="text-link" href="https://github.com/misswell/localstore#接口" target="_blank" rel="noreferrer">完整文档 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="api-list">
+            <article class="api-row"><span class="method method-post">POST</span><code>/mock/:key</code><p>写入原始内容，并保留 Content-Type</p><span class="api-arrow" aria-hidden="true">→</span></article>
+            <article class="api-row"><span class="method method-get">GET</span><code>/mock/:key</code><p>读取指定 key 的原始值</p><span class="api-arrow" aria-hidden="true">→</span></article>
+            <article class="api-row"><span class="method method-get">GET</span><code>/keys</code><p>列出当前存储中的全部 key</p><span class="api-arrow" aria-hidden="true">→</span></article>
+            <article class="api-row"><span class="method method-delete">DELETE</span><code>/mock/:key</code><p>删除一个指定的 key</p><span class="api-arrow" aria-hidden="true">→</span></article>
+          </div>
+        </section>
+
+        <section class="closing-section" aria-labelledby="closing-title">
+          <div class="closing-mark" aria-hidden="true">ls<span>_</span></div>
+          <p class="section-kicker">A LITTLE MORE VISIBILITY</p>
+          <h2 id="closing-title">让状态出现，<br><em>让调试继续。</em></h2>
+          <a class="button button-light" href="https://github.com/misswell/localstore" target="_blank" rel="noreferrer">在 GitHub 上开始 <span aria-hidden="true">↗</span></a>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">ls</span><span>localstore</span></a>
+        <p>为前端调试而生 · MIT License</p>
+        <a href="https://github.com/misswell/localstore" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </footer>
+    </div>
+    <div class="copy-toast" role="status" aria-live="polite">代码已复制</div>
+  </body>
+</html>
