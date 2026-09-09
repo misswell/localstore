@@ -1,6 +1,6 @@
 {
   "name": "localstore",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A CORS-enabled localStorage-like HTTP service for frontend debugging",
   "type": "module",
   "scripts": {

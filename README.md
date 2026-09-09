@@ -2,7 +2,7 @@
 
 一个用于前端调试的、类似 `localStorage` 的本地 HTTP 存储服务。零第三方依赖，支持任意来源跨域访问，数据默认持久化在 `.localstore/data.json`。
 
-官网介绍页：[localstore.liuguofeng.com](http://localstore.liuguofeng.com)
+官网介绍页：[localstore.liuguofeng.com](https://localstore.liuguofeng.com)
 
 ## 启动
 
