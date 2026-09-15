@@ -9,9 +9,45 @@ const elements = {
   success: document.querySelector("#success"),
   errors: document.querySelector("#errors"),
   average: document.querySelector("#average"),
+  agentInstructions: document.querySelector("#agent-instructions"),
+  copyAgentGuide: document.querySelector("#copy-agent-guide"),
 };
 
 let entries = [];
+
+async function copyAgentGuide() {
+  const button = elements.copyAgentGuide;
+  try {
+    await writeClipboard(elements.agentInstructions.textContent.trim());
+    button.textContent = "已复制";
+    button.classList.add("copied");
+  } catch (error) {
+    button.textContent = "复制失败";
+    console.error("Unable to copy agent guide", error);
+  }
+  window.setTimeout(() => {
+    button.textContent = "一键复制给 Agent";
+    button.classList.remove("copied");
+  }, 1800);
+}
+
+async function writeClipboard(value) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.append(textarea);
+  textarea.select();
+  const copied = document.execCommand("copy");
+  textarea.remove();
+  if (!copied) throw new Error("Clipboard is unavailable");
+}
 
 document.querySelector("#host").textContent = `${location.hostname} :`;
 document.querySelector("#port").textContent = location.port || (location.protocol === "https:" ? "443" : "80");
@@ -97,6 +133,7 @@ function formatTime(timestamp) {
 elements.method.addEventListener("change", render);
 elements.search.addEventListener("input", render);
 elements.refresh.addEventListener("click", loadLogs);
+elements.copyAgentGuide.addEventListener("click", copyAgentGuide);
 
 loadLogs();
 setInterval(loadLogs, 2000);

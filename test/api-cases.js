@@ -133,6 +133,8 @@ export async function apiCases(dataFile) {
       assert.match(response.headers["content-type"], /text\/html/);
       assert.match(response.body, /请求日志/);
       assert.match(response.body, /调用提示/);
+      assert.match(response.body, /一键复制给 Agent/);
+      assert.match(response.body, /agent-instructions/);
       assert.match(response.body, /\/mock\/:key/);
     }],
     ["returns current request logs without logging dashboard polling", async () => {

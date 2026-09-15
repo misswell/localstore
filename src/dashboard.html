@@ -41,6 +41,14 @@
         </div>
       </div>
 
+      <div class="agent-brief">
+        <div>
+          <div class="agent-brief-label"><span></span> AGENT HANDOFF</div>
+          <p id="agent-instructions">请使用 localstore 调试服务 http://127.0.0.1:7777：先 POST /mock/:key/responses 注册 success 与 error 模板（可自定义 status、headers、body），再 GET /mock/:key?response=success 或 ?response=error 选择返回格式。key 含空格或斜杠时先 URL 编码；跨端口浏览器调用无需代理，服务已支持 CORS。未指定 response 时读取原始值。</p>
+        </div>
+        <button class="copy-button" id="copy-agent-guide" type="button">一键复制给 Agent</button>
+      </div>
+
       <div class="guide-grid">
         <article class="guide-card">
           <div class="guide-card-head"><span class="method GET">BROWSER</span><h3>浏览器 fetch</h3></div>
