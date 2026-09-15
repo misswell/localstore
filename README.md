@@ -42,6 +42,34 @@ curl http://127.0.0.1:7777/mock/xxxkey
 
 不存在的键返回 HTTP `404`。包含空格、斜杠等字符的键应使用 `encodeURIComponent` 编码。
 
+### 自定义成功和错误格式
+
+调用方可以为同一个 key 注册 `success` 和 `error` 两套响应模板，再通过查询参数选择返回哪一套。模板可自定义 HTTP 状态码、响应头和 JSON/文本响应体：
+
+```bash
+curl -X POST http://127.0.0.1:7777/mock/xxxkey/responses \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "success": {
+      "status": 200,
+      "body": { "code": 0, "data": {} }
+    },
+    "error": {
+      "status": 429,
+      "headers": { "content-type": "application/json" },
+      "body": { "code": 429, "message": "rate limited" }
+    }
+  }'
+
+# 使用成功格式
+curl http://127.0.0.1:7777/mock/xxxkey?response=success
+
+# 使用错误格式
+curl http://127.0.0.1:7777/mock/xxxkey?response=error
+```
+
+`status` 必须是可作为最终响应的 `200` 到 `599` 整数，不能使用 `204`、`205` 和 `304`；没有设置 `Content-Type` 时，JSON body 默认返回 `application/json; charset=utf-8`。不带 `response` 参数时仍返回原始写入值，因此不会影响已有调用。
+
 ### 其他操作
 
 ```bash

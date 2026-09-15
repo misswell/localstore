@@ -2,6 +2,7 @@ import { createServer } from "http";
 import { dashboardAssets } from "./dashboard.js";
 import { parseRoute, readBody, send, sendJson } from "./http.js";
 import { attachRequestLogger } from "./request-log.js";
+import { parseResponseTemplates, responseCases } from "./response-templates.js";
 
 export function createLocalStoreServer(storage, requestLog) {
   return createServer(async (request, response) => {
@@ -19,6 +20,13 @@ export function createLocalStoreServer(storage, requestLog) {
       if (request.method === "OPTIONS") return sendResponse(204);
 
       const route = parseRoute(request.url);
+      if (route.responseCase && !responseCases.includes(route.responseCase)) {
+        return sendJsonResponse(400, {
+          error: "Invalid response case",
+          response: route.responseCase,
+          allowed: responseCases,
+        });
+      }
 
       if (request.method === "GET" && dashboardAssets[route.action]) {
         const asset = dashboardAssets[route.action];
@@ -27,6 +35,16 @@ export function createLocalStoreServer(storage, requestLog) {
 
       if (request.method === "GET" && route.action === "logs") {
         return sendJsonResponse(200, requestLog ? requestLog.list() : []);
+      }
+
+      if (request.method === "POST" && route.action === "mockResponses") {
+        const templates = parseResponseTemplates(await readBody(request));
+        await storage.setResponses(route.key, templates);
+        return sendJsonResponse(200, {
+          ok: true,
+          key: route.key,
+          responses: Object.keys(templates),
+        });
       }
 
       if (request.method === "POST" && route.action === "mock") {
@@ -39,6 +57,17 @@ export function createLocalStoreServer(storage, requestLog) {
       if (request.method === "GET" && route.action === "mock") {
         const item = storage.get(route.key);
         if (!item) return sendJsonResponse(404, { error: "Key not found", key: route.key });
+        if (route.responseCase) {
+          const template = item.responses?.[route.responseCase];
+          if (!template) {
+            return sendJsonResponse(404, {
+              error: "Response template not found",
+              key: route.key,
+              response: route.responseCase,
+            });
+          }
+          return sendResponse(template.status, template.body, template.headers);
+        }
         return sendResponse(200, item.value, { "content-type": item.contentType });
       }
 

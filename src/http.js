@@ -20,7 +20,7 @@ export function getCorsHeaders({ origin, requestedHeaders } = {}) {
 }
 
 export function send(response, status, body = "", headers = {}, corsOptions = {}) {
-  response.writeHead(status, { ...getCorsHeaders(corsOptions), ...headers });
+  response.writeHead(status, { ...headers, ...getCorsHeaders(corsOptions) });
   response.end(body);
 }
 
@@ -49,10 +49,23 @@ export async function readBody(request) {
 
 export function parseRoute(rawUrl) {
   const url = new URL(rawUrl, "http://localhost");
+  const responseRoute = url.pathname.match(/^\/mock\/(.+)\/responses$/);
+  if (responseRoute) {
+    try {
+      return { action: "mockResponses", key: decodeURIComponent(responseRoute[1]) };
+    } catch {
+      return { action: "invalid" };
+    }
+  }
+
   const match = url.pathname.match(/^\/mock\/(.+)$/);
   if (match) {
     try {
-      return { action: "mock", key: decodeURIComponent(match[1]) };
+      return {
+        action: "mock",
+        key: decodeURIComponent(match[1]),
+        responseCase: url.searchParams.get("response") || null,
+      };
     } catch {
       return { action: "invalid" };
     }

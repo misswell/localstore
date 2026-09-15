@@ -52,6 +52,7 @@ h1 { margin: 12px 0 6px; font-size: clamp(38px, 6vw, 64px); letter-spacing: -.05
 .guide-card > p { margin: 11px 0 14px; color: var(--muted); font-size: 12px; }
 .guide-card pre { overflow-x: auto; margin: 0; padding: 15px; color: #d8e9e2; border: 1px solid rgba(196, 229, 219, .09); border-radius: 9px; background: #0a1512; font: 11px/1.75 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .guide-card code { white-space: pre; }
+.guide-card-template { grid-column: 1 / -1; }
 .guide-routes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--line); }
 .guide-route { display: grid; grid-template-columns: auto 1fr; column-gap: 9px; align-items: center; min-width: 0; }
 .guide-route code { overflow: hidden; color: var(--text); font: 11px/1.2 ui-monospace, monospace; text-overflow: ellipsis; white-space: nowrap; }

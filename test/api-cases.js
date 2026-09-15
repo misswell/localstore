@@ -64,6 +64,54 @@ export async function apiCases(dataFile) {
       );
       assert.match(response.headers.vary, /Origin/);
     }],
+    ["returns caller-defined success and error response templates", async () => {
+      const key = encodeURIComponent("rate limit");
+      const configured = await request(baseUrl, `/mock/${key}/responses`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          success: {
+            status: 201,
+            headers: { "x-response-case": "success" },
+            body: { ok: true, data: { remaining: 9 } },
+          },
+          error: {
+            status: 429,
+            headers: { "content-type": "application/json", "x-response-case": "error" },
+            body: { ok: false, message: "rate limited" },
+          },
+        }),
+      });
+      assert.equal(configured.status, 200);
+      assert.deepEqual(JSON.parse(configured.body).responses, ["success", "error"]);
+
+      const success = await request(baseUrl, `/mock/${key}?response=success`);
+      assert.equal(success.status, 201);
+      assert.equal(success.headers["content-type"], "application/json; charset=utf-8");
+      assert.equal(success.headers["x-response-case"], "success");
+      assert.deepEqual(JSON.parse(success.body), { ok: true, data: { remaining: 9 } });
+
+      const error = await request(baseUrl, `/mock/${key}?response=error`);
+      assert.equal(error.status, 429);
+      assert.equal(error.headers["x-response-case"], "error");
+      assert.deepEqual(JSON.parse(error.body), { ok: false, message: "rate limited" });
+    }],
+    ["rejects unknown response cases", async () => {
+      const response = await request(baseUrl, "/mock/greeting?response=preview");
+      assert.equal(response.status, 400);
+      assert.equal(JSON.parse(response.body).error, "Invalid response case");
+    }],
+    ["rejects response statuses that cannot carry a body", async () => {
+      const response = await request(baseUrl, "/mock/invalid-status/responses", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          success: { status: 204, body: { ignored: true } },
+        }),
+      });
+      assert.equal(response.status, 400);
+      assert.match(JSON.parse(response.body).error, /excluding 204/);
+    }],
     ["returns 404 for missing keys", async () => {
       const response = await request(baseUrl, "/mock/missing?token=must-not-be-logged");
       assert.equal(response.status, 404);

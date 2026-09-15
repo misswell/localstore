@@ -26,7 +26,21 @@ export class Storage {
   }
 
   async set(key, value, contentType) {
-    this.items.set(key, { value, contentType });
+    const existing = this.items.get(key);
+    this.items.set(key, {
+      value,
+      contentType,
+      ...(existing?.responses ? { responses: existing.responses } : {}),
+    });
+    await this.persist();
+  }
+
+  async setResponses(key, responses) {
+    const existing = this.items.get(key) || {
+      value: "",
+      contentType: "text/plain; charset=utf-8",
+    };
+    this.items.set(key, { ...existing, responses });
     await this.persist();
   }
 

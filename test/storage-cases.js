@@ -20,6 +20,22 @@ export function storageCases(directory) {
         contentType: "text/plain",
       });
     }],
+    ["persists response templates across instances", async () => {
+      const file = join(directory, "response-templates.json");
+      const first = new Storage(file);
+      await first.setResponses("profile", {
+        success: { status: 200, headers: { "content-type": "application/json" }, body: "{}" },
+        error: { status: 503, headers: { "content-type": "text/plain" }, body: "offline" },
+      });
+
+      const second = new Storage(file);
+      await second.load();
+      assert.deepEqual(second.get("profile").responses.error, {
+        status: 503,
+        headers: { "content-type": "text/plain" },
+        body: "offline",
+      });
+    }],
     ["removes values and clears the store", async () => {
       const storage = new Storage(join(directory, "operations.json"));
       await storage.set("one", "1", "text/plain");
