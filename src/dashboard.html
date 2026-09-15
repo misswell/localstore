@@ -28,6 +28,63 @@
       <article><span>平均耗时</span><strong id="average">—</strong></article>
     </section>
 
+    <section class="guide" aria-labelledby="guide-title">
+      <div class="guide-head">
+        <div>
+          <div class="eyebrow">QUICK CALL GUIDE</div>
+          <h2 id="guide-title">从页面、脚本或终端调用 localstore</h2>
+          <p>把它当成一块只在本机运行的 HTTP 键值存储。默认地址就是当前服务的监听地址。</p>
+        </div>
+        <div class="guide-base">
+          <span>BASE URL</span>
+          <code>http://127.0.0.1:7777</code>
+        </div>
+      </div>
+
+      <div class="guide-grid">
+        <article class="guide-card">
+          <div class="guide-card-head"><span class="method GET">BROWSER</span><h3>浏览器 fetch</h3></div>
+          <p>写入 JSON，再从另一个页面读取同一个 key。</p>
+          <pre><code>const base = "http://127.0.0.1:7777";
+const key = encodeURIComponent("user settings");
+
+await fetch(base + "/mock/" + key, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ theme: "dark" }),
+});
+
+const value = await fetch(base + "/mock/" + key)
+  .then((response) =&gt; {
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    return response.json();
+  });</code></pre>
+        </article>
+        <article class="guide-card">
+          <div class="guide-card-head"><span class="method POST">CURL</span><h3>终端调用</h3></div>
+          <p>适合快速写入、读取或清理一条调试数据。</p>
+          <pre><code># 写入 JSON
+curl -X POST 'http://127.0.0.1:7777/mock/user' \
+  -H 'Content-Type: application/json' \
+  --data '{"name":"Alice","enabled":true}'
+
+# 读取
+curl --fail 'http://127.0.0.1:7777/mock/user'
+
+# 删除
+curl -X DELETE 'http://127.0.0.1:7777/mock/user'</code></pre>
+        </article>
+      </div>
+
+      <div class="guide-routes" aria-label="常用接口">
+        <div class="guide-route"><span class="method POST">POST</span><code>/mock/:key</code><small>写入原始值</small></div>
+        <div class="guide-route"><span class="method GET">GET</span><code>/mock/:key</code><small>读取指定值</small></div>
+        <div class="guide-route"><span class="method GET">GET</span><code>/keys</code><small>列出全部 key</small></div>
+        <div class="guide-route"><span class="method DELETE">DELETE</span><code>/mock/:key</code><small>删除指定值</small></div>
+      </div>
+      <p class="guide-note"><strong>调用提示</strong> 键名包含空格或斜杠时先使用 <code>encodeURIComponent(key)</code>；浏览器跨端口调用已内置 CORS 和预检支持。这个服务面向本机开发，不用于生产数据。</p>
+    </section>
+
     <section class="panel">
       <div class="toolbar">
         <div>
