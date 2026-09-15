@@ -19,6 +19,7 @@
         </a>
         <nav class="nav" aria-label="主导航">
           <a href="#why">为什么</a>
+          <a href="#usage">调用说明</a>
           <a href="#api">接口</a>
           <a href="#install">快速开始</a>
         </nav>
@@ -156,6 +157,57 @@
   body: JSON.stringify({ theme: <span class="code-string">"dark"</span> }),
 });</code></pre>
             <div class="code-card-foot"><span class="terminal-prompt">$</span><span>写入完成 · <b>user settings</b></span></div>
+          </div>
+        </section>
+
+        <section class="usage-section section-block" id="usage" aria-labelledby="usage-title">
+          <div class="usage-heading">
+            <div>
+              <p class="section-kicker">CALL FROM ANY PAGE</p>
+              <h2 id="usage-title">调用不需要 SDK，<br>只有一个 base URL。</h2>
+            </div>
+            <p>
+              服务启动后，浏览器、脚本和其他本地进程都可以直接发 HTTP 请求。键名请先编码，值会按原始文本保存。
+            </p>
+          </div>
+          <div class="usage-grid">
+            <article class="usage-panel code-card">
+              <div class="code-card-top"><span><i></i><i></i><i></i></span><small>browser.js · fetch</small><button class="copy-button" type="button" data-copy-target="browser-call-code">复制代码</button></div>
+              <pre id="browser-call-code"><code><span class="code-muted">const</span> base = <span class="code-string">"http://127.0.0.1:7777"</span>;
+<span class="code-muted">const</span> key = encodeURIComponent(<span class="code-string">"user settings"</span>);
+
+<span class="code-muted">await</span> fetch(<span class="code-string">`${base}/mock/</span>${key}<span class="code-string">`</span>, {
+  method: <span class="code-string">"POST"</span>,
+  headers: { <span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span> },
+  body: JSON.stringify({ theme: <span class="code-string">"dark"</span> }),
+});
+
+<span class="code-muted">const</span> value = <span class="code-muted">await</span> fetch(<span class="code-string">`${base}/mock/</span>${key}<span class="code-string">`</span>)
+  .then((response) =&gt; {
+    <span class="code-muted">if</span> (!response.ok) <span class="code-muted">throw</span> <span class="code-muted">new</span> Error(<span class="code-string">`HTTP ${response.status}`</span>);
+    <span class="code-muted">return</span> response.json();
+  });</code></pre>
+              <div class="code-card-foot"><span class="terminal-prompt">→</span><span>跨页面读取同一个 <b>user settings</b></span></div>
+            </article>
+            <article class="usage-panel code-card">
+              <div class="code-card-top"><span><i></i><i></i><i></i></span><small>terminal · curl</small><button class="copy-button" type="button" data-copy-target="curl-call-code">复制代码</button></div>
+              <pre id="curl-call-code"><code><span class="code-muted"># 写入 JSON</span>
+curl -X POST <span class="code-string">'http://127.0.0.1:7777/mock/user'</span> \
+  -H <span class="code-string">'Content-Type: application/json'</span> \
+  --data <span class="code-string">'{"name":"Alice","enabled":true}'</span>
+
+<span class="code-muted"># 读取原始值</span>
+curl --fail <span class="code-string">'http://127.0.0.1:7777/mock/user'</span>
+
+<span class="code-muted"># 删除键值</span>
+curl -X DELETE <span class="code-string">'http://127.0.0.1:7777/mock/user'</span></code></pre>
+              <div class="code-card-foot"><span class="terminal-prompt">$</span><span>默认地址 · <b>127.0.0.1:7777</b></span></div>
+            </article>
+          </div>
+          <div class="usage-notes" aria-label="调用提示">
+            <div class="usage-note"><span class="usage-note-label">KEY</span><div><strong>键名先编码</strong><p>空格、斜杠等特殊字符请使用 <code>encodeURIComponent(key)</code>。</p></div></div>
+            <div class="usage-note"><span class="usage-note-label">CORS</span><div><strong>浏览器可直接调用</strong><p>服务内置跨域与预检支持，跨端口共享调试状态。</p></div></div>
+            <div class="usage-note"><span class="usage-note-label">LOCAL</span><div><strong>只服务本机开发</strong><p><code>127.0.0.1</code> 指访问者自己的电脑，不用于生产数据。</p></div></div>
           </div>
         </section>
 

@@ -162,6 +162,22 @@ h1 em, h2 em { color: var(--coral); font-style: normal; }
 .terminal-prompt { color: var(--coral); font-weight: 800; }
 .code-card-foot b { color: var(--teal); font-weight: 400; }
 
+.usage-section { padding-top: 42px; }
+.usage-heading { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(250px, .95fr); align-items: end; gap: clamp(40px, 8vw, 120px); }
+.usage-heading h2 { max-width: 650px; margin: 20px 0 0; font: 800 clamp(2.6rem, 4.8vw, 4.7rem)/.96 var(--display); letter-spacing: -.072em; }
+.usage-heading > p { max-width: 405px; margin: 0 0 5px; color: var(--muted); font-size: .96rem; line-height: 1.85; }
+.usage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 57px; }
+.usage-panel { min-width: 0; box-shadow: 8px 10px 0 rgba(17, 24, 32, .1); }
+.usage-panel pre { min-height: 356px; }
+.usage-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.usage-note { display: grid; grid-template-columns: auto 1fr; gap: 13px; min-height: 116px; padding: 18px; border: 1px solid var(--line); background: var(--paper-deep); }
+.usage-note-label { display: grid; width: 34px; height: 34px; place-items: center; color: var(--ink); background: var(--yellow); font: 700 .57rem/1 var(--mono); }
+.usage-note:nth-child(2) .usage-note-label { background: var(--teal); }
+.usage-note:nth-child(3) .usage-note-label { color: var(--paper); background: var(--ink); }
+.usage-note strong { display: block; margin: 1px 0 8px; font: 800 .87rem/1 var(--display); }
+.usage-note p { margin: 0; color: var(--muted); font-size: .75rem; line-height: 1.65; }
+.usage-note code { color: var(--ink); font: .68rem/1 var(--mono); }
+
 .api-section { padding-top: 55px; }
 .api-heading h2 { max-width: 700px; font-size: clamp(2.4rem, 4vw, 4rem); }
 .api-heading .text-link { margin-bottom: 5px; }
@@ -191,6 +207,7 @@ h1 em, h2 em { color: var(--coral); font-style: normal; }
   .hero-stage { width: min(100%, 570px); margin: 0 auto; }
   .section-block { padding: 105px 0; }
   .why-section, .install-section { grid-template-columns: 1fr; gap: 26px; }
+  .usage-heading { grid-template-columns: 1fr; gap: 26px; }
   .why-copy { padding-top: 14px; }
   .install-section { padding-bottom: 105px; }
   .install-copy > p:not(.section-kicker) { max-width: 520px; }
@@ -226,6 +243,10 @@ h1 em, h2 em { color: var(--coral); font-style: normal; }
   .feature-card { min-height: 246px; }
   .feature-card h3 { margin-top: 57px; }
   .install-section { padding-bottom: 83px; }
+  .usage-section { padding-top: 0; }
+  .usage-grid, .usage-notes { grid-template-columns: 1fr; }
+  .usage-heading > p { max-width: 520px; }
+  .usage-panel pre { min-height: 0; }
   .install-steps { margin-top: 31px; }
   .install-step div { flex-direction: column; gap: 5px; }
   .code-card pre { padding: 23px 18px 27px; font-size: .65rem; }
