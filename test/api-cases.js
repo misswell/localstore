@@ -46,6 +46,24 @@ export async function apiCases(dataFile) {
       assert.equal(response.headers["access-control-allow-origin"], "*");
       assert.match(response.headers["access-control-allow-methods"], /POST/);
     }],
+    ["allows credentialed cross-origin preflight", async () => {
+      const response = await request(baseUrl, "/mock/key", {
+        method: "OPTIONS",
+        headers: {
+          origin: "http://localhost:8004",
+          "access-control-request-method": "GET",
+          "access-control-request-headers": "authorization,content-type,x-app-id",
+        },
+      });
+      assert.equal(response.status, 204);
+      assert.equal(response.headers["access-control-allow-origin"], "http://localhost:8004");
+      assert.equal(response.headers["access-control-allow-credentials"], "true");
+      assert.equal(
+        response.headers["access-control-allow-headers"],
+        "authorization,content-type,x-app-id",
+      );
+      assert.match(response.headers.vary, /Origin/);
+    }],
     ["returns 404 for missing keys", async () => {
       const response = await request(baseUrl, "/mock/missing?token=must-not-be-logged");
       assert.equal(response.status, 404);

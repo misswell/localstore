@@ -7,15 +7,27 @@ export const corsHeaders = {
   "access-control-max-age": "86400",
 };
 
-export function send(response, status, body = "", headers = {}) {
-  response.writeHead(status, { ...corsHeaders, ...headers });
+export function getCorsHeaders({ origin, requestedHeaders } = {}) {
+  if (!origin) return { ...corsHeaders };
+
+  return {
+    ...corsHeaders,
+    "access-control-allow-origin": origin,
+    "access-control-allow-credentials": "true",
+    ...(requestedHeaders ? { "access-control-allow-headers": requestedHeaders } : {}),
+    vary: requestedHeaders ? "Origin, Access-Control-Request-Headers" : "Origin",
+  };
+}
+
+export function send(response, status, body = "", headers = {}, corsOptions = {}) {
+  response.writeHead(status, { ...getCorsHeaders(corsOptions), ...headers });
   response.end(body);
 }
 
-export function sendJson(response, status, value) {
+export function sendJson(response, status, value, corsOptions = {}) {
   send(response, status, JSON.stringify(value), {
     "content-type": "application/json; charset=utf-8",
-  });
+  }, corsOptions);
 }
 
 export async function readBody(request) {
